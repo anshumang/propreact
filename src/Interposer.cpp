@@ -21,15 +21,20 @@
 
 Interposer *p_interposer = NULL;
 
-Interposer::Interposer(Trigger* trig)
+Interposer::Interposer(std::string req_url, std::string resp_url, Trigger* trig)
   : m_last(0), m_trig(trig)
 {
-  std::cout << "Interposer CTOR" << std::endl;
+    std::cout << "Interposer CTOR" << std::endl;
+    m_req_comm = new Communicator(req_url, RECEIVER);
+    m_req_comm->bind();
+    m_resp_comm = new Communicator(resp_url, SENDER);
+    m_resp_comm->connect();
 }
 
 Interposer::~Interposer()
 {
-
+    delete m_req_comm;
+    delete m_resp_comm;
 }
 
 void Interposer::launch(unsigned long gridX, unsigned long gridY, unsigned long gridZ, unsigned long blockX, unsigned long blockY, unsigned long blockZ)
@@ -44,4 +49,17 @@ void Interposer::launch(unsigned long gridX, unsigned long gridY, unsigned long 
     m_trig->WriteData(g);
     m_trig->Notify(1);
     m_trig->Wait(2);
+    std::string req("REQUEST");
+    std::cout << "I : Before send " << sizeof(req) << std::endl;
+    int bytes=0;
+    assert((bytes = m_req_comm->send(req.c_str(), req.length()+1))>=0);    
+    std::cout << "I : After send" << std::endl;
+    while(true)
+    {
+       void *buf = NULL;
+       int bytes = m_resp_comm->receive(&buf);
+       assert(bytes >= 0);
+       m_req_comm->freemsg(buf);
+       break;
+    }
 }

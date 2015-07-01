@@ -29,12 +29,12 @@ extern Window *p_window;
 extern Trigger *p_trigger;
 
 extern "C"
-void XrushCreate()
+void XrushCreate(char *url1, char *url2)
 {
    p_window = new Window();
    p_trigger = new Trigger();
    p_profiler = new CuptiProfiler(p_window);
-   p_interposer = new Interposer(p_trigger);
+   p_interposer = new Interposer(url1, url2, p_trigger);
    p_predictor = new Predictor(p_trigger, p_window);
 }
 

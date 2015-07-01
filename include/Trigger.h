@@ -23,6 +23,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <cassert>
+#include "Communicator.h"
 
 struct Grid
 {
