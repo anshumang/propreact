@@ -25,10 +25,10 @@ Interposer::Interposer(std::string req_url, std::string resp_url, Trigger* trig)
   : m_last(0), m_trig(trig)
 {
     std::cout << "Interposer CTOR" << std::endl;
-    m_req_comm = new Communicator(req_url, RECEIVER);
-    m_req_comm->bind();
-    m_resp_comm = new Communicator(resp_url, SENDER);
-    m_resp_comm->connect();
+    m_req_comm = new Communicator(req_url, SENDER);
+    m_req_comm->connect();
+    m_resp_comm = new Communicator(resp_url, RECEIVER);
+    m_resp_comm->bind();
 }
 
 Interposer::~Interposer()

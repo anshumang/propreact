@@ -25,10 +25,12 @@ Communicator::Communicator(std::string& url, Purpose recv_or_send)
     if(recv_or_send == SENDER)
     {
        assert((m_sock = nn_socket(AF_SP, NN_PUSH)) >= 0);
+       std::cout << "SENDER " << url.c_str() << " " << m_sock << std::endl;
     }
     else if(recv_or_send == RECEIVER)
     {
        assert((m_sock = nn_socket(AF_SP, NN_PULL)) >= 0);
+       std::cout << "RECEIVER " << url.c_str() << " " << m_sock << std::endl;
     }
     else
     {
@@ -38,13 +40,19 @@ Communicator::Communicator(std::string& url, Purpose recv_or_send)
 
 Communicator::~Communicator()
 {
-    assert(nn_shutdown(m_sock, 0) >= 0);
+    /*if(m_sock == 1)
+    {
+      std::cout << "SHUTDOWN " << m_sock << std::endl;
+      assert(nn_shutdown(m_sock, 0) >= 0);
+    }*/
 }
 
 int Communicator::connect()
 {
     int ret = nn_connect(m_sock, m_url.c_str());
     assert(ret >= 0);
+    std::cout << "CONNECT " << m_url.c_str() << " " << m_sock << std::endl;
+    
     return ret;
 }
 
@@ -52,13 +60,17 @@ int Communicator::bind()
 {
     int ret = nn_bind (m_sock, m_url.c_str());
     assert(ret >= 0);
+    std::cout << "BIND " << m_url.c_str() << " " << m_sock << std::endl;
+
     return ret;
 }
 
 int Communicator::receive(void *buf)
 {
+   std::cout << "RECEIVE start " << m_sock << std::endl;
    int bytes = nn_recv(m_sock, buf, NN_MSG, 0);
    assert(bytes >= 0);
+   std::cout << "RECEIVE end " << m_sock << " " << bytes << std::endl;
    return bytes;
 }
 
@@ -71,7 +83,9 @@ int Communicator::freemsg(void *buf)
 
 int Communicator::send(const void *buf, size_t size)
 {
+   std::cout << "SEND start " << m_sock << std::endl;
    int bytes = nn_send(m_sock, buf, size, 0);
    assert(bytes >= 0);
+   std::cout << "SEND end " << m_sock << " " << bytes << std::endl;
    return bytes;
 }

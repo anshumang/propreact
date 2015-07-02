@@ -22,6 +22,7 @@
 
 #include <string>
 #include <cassert>
+#include <iostream>
 #include <nn.h>
 #include <pipeline.h>
 
