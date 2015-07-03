@@ -21,21 +21,24 @@
 #include "Interposer.h"
 #include "Predictor.h"
 #include "Window.h"
+#include "GlobalWindow.h"
 
 extern CuptiProfiler *p_profiler;
 extern Interposer *p_interposer;
 extern Predictor *p_predictor;
 extern Window *p_window;
 extern Trigger *p_trigger;
+extern GlobalWindow *p_global_window;
 
 extern "C"
 void XrushCreate(char *url1, char *url2)
 {
    p_window = new Window();
+   p_global_window = new GlobalWindow();
    p_trigger = new Trigger();
-   p_profiler = new CuptiProfiler(p_window);
+   p_profiler = new CuptiProfiler(p_window, p_global_window);
    p_interposer = new Interposer(url1, url2, p_trigger);
-   p_predictor = new Predictor(p_trigger, p_window);
+   p_predictor = new Predictor(p_trigger, p_window, p_global_window);
 }
 
 extern "C"

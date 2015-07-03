@@ -50,10 +50,10 @@ void Interposer::launch(unsigned long gridX, unsigned long gridY, unsigned long 
     m_trig->Notify(1);
     m_trig->Wait(2);
     std::string req("REQUEST");
-    std::cout << "I : Before send " << sizeof(req) << std::endl;
+    //std::cout << "I : Before send " << sizeof(req) << std::endl;
     int bytes=0;
     assert((bytes = m_req_comm->send(req.c_str(), req.length()+1))>=0);    
-    std::cout << "I : After send" << std::endl;
+    //std::cout << "I : After send" << std::endl;
     while(true)
     {
        void *buf = NULL;

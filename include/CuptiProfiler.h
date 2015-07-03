@@ -29,6 +29,7 @@
 #include <cupti.h>
 #include "Trigger.h"
 #include "Window.h"
+#include "GlobalWindow.h"
 
 #define CUPTI_CALL(call)                                                \
   do {                                                                  \
@@ -58,11 +59,12 @@ struct CuptiProfiler
    typedef std::vector< ExpKeyCuptiTuple > ExpKeyCuptiTupleVector;
    ExpKeyCuptiTupleVector m_keyval_vec_raw, m_keyval_vec;
    Window* m_win;
+   GlobalWindow* m_gwin;
    unsigned long m_start, m_last, m_last_api;
    unsigned long m_tot_records, m_curr_records, m_tot_disjoint_records;
    size_t m_cupti_buffer_size, m_cupti_buffer_pool_limit;
    friend void CUPTIAPI return_buffer(CUcontext ctx, uint32_t stream_id, uint8_t *buffer, size_t size, size_t valid_size);
-   CuptiProfiler(Window *);
+   CuptiProfiler(Window *, GlobalWindow *);
    ~CuptiProfiler();
    void read();
 private:

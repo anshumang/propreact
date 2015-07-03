@@ -21,8 +21,8 @@
 
 Predictor *p_predictor = NULL;
 
-Predictor::Predictor(Trigger* trig, Window *win)
-  : m_trig(trig), m_win(win), m_last(0), m_lib(false), m_start_lib(0), m_end_lib(0)
+Predictor::Predictor(Trigger* trig, Window *win, GlobalWindow *gwin)
+  : m_trig(trig), m_win(win), m_last(0), m_lib(false), m_start_lib(0), m_end_lib(0), m_gwin(gwin)
 {
    m_thr = std::thread(&Predictor::ProcessTrigger, this);
 }
@@ -79,11 +79,13 @@ void Predictor::ProcessTrigger()
       
       unsigned long active = m_win->ReadDataActive(g);
       unsigned long idle = m_win->ReadDataIdle(g);
+      RecordVec r = m_gwin->consume();
+      //std::cout << r.size() << std::endl;
       //std::cout << "From Window --- " << g.x << " " << g.y << " " << g.z << " " << idle << std::endl;
       //std::cout << now_t - m_last << " " << idle << std::endl;
       //m_last = now_t + idle;
-      
-      std::cout << active << "\n" << idle << std::endl;
+      /*PREDICTOR OUTPUT*/
+      //std::cout << active << "\n" << idle << std::endl;
 
       //m_last = active+idle;
    }

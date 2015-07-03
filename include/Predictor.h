@@ -26,15 +26,17 @@
 #include <sys/time.h>
 #include "Trigger.h"
 #include "Window.h"
+#include "GlobalWindow.h"
 
 struct Predictor
 {
    std::thread m_thr;
    Trigger* m_trig;
    Window* m_win;
+   GlobalWindow* m_gwin;
    long m_last, m_start_lib, m_end_lib;
    bool m_lib;
-   Predictor(Trigger*, Window*);
+   Predictor(Trigger*, Window*, GlobalWindow*);
    ~Predictor();
    void ProcessTrigger();
 };

@@ -67,10 +67,10 @@ int Communicator::bind()
 
 int Communicator::receive(void *buf)
 {
-   std::cout << "RECEIVE start " << m_sock << std::endl;
+   //std::cout << "RECEIVE start " << m_sock << std::endl;
    int bytes = nn_recv(m_sock, buf, NN_MSG, 0);
    assert(bytes >= 0);
-   std::cout << "RECEIVE end " << m_sock << " " << bytes << std::endl;
+   //std::cout << "RECEIVE end " << m_sock << " " << bytes << std::endl;
    return bytes;
 }
 
@@ -83,9 +83,9 @@ int Communicator::freemsg(void *buf)
 
 int Communicator::send(const void *buf, size_t size)
 {
-   std::cout << "SEND start " << m_sock << std::endl;
+   //std::cout << "SEND start " << m_sock << std::endl;
    int bytes = nn_send(m_sock, buf, size, 0);
    assert(bytes >= 0);
-   std::cout << "SEND end " << m_sock << " " << bytes << std::endl;
+   //std::cout << "SEND end " << m_sock << " " << bytes << std::endl;
    return bytes;
 }

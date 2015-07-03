@@ -15,7 +15,7 @@ project(propreact)
 
 include_directories(include ../include /usr/include /usr/local/cuda/extras/CUPTI/include /usr/include /usr/local/cuda/include /opt/data1/share/users/anshuman/nanomsg/src)
 
-add_library(propreact SHARED src/Xrush.cpp src/CuptiProfiler.cpp src/Interposer.cpp src/Predictor.cpp src/Window.cpp src/Trigger.cpp src/Communicator.cpp)
+add_library(propreact SHARED src/Xrush.cpp src/CuptiProfiler.cpp src/Interposer.cpp src/Predictor.cpp src/Window.cpp src/Trigger.cpp src/Communicator.cpp src/GlobalWindow.cpp)
 
 target_link_libraries(propreact cupti)
 target_link_libraries(propreact nanomsg)

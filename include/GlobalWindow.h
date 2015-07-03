@@ -17,17 +17,34 @@
  * Author: Anshuman Goswami <anshumang@gatech.edu>
  */
 
-#include "RequestPool.h"
-#include "InterposerBackend.h"
+#ifndef _GLOBAL_WINDOW_H
+#define _GLOBAL_WINDOW_H
 
-int main(int argc, const char **argv)
+#include <vector>
+#include <mutex>
+#include <algorithm>
+#include <iostream>
+
+struct Record
 {
-    RequestPool reqpool;
-    InterposerBackend tenant0("ipc:///tmp/propreact0b.ipc", "ipc:///tmp/propreact0a.ipc", 0, &reqpool);
-    tenant0.start();
-    InterposerBackend tenant1("ipc:///tmp/propreact1b.ipc", "ipc:///tmp/propreact1a.ipc", 0, &reqpool);
-    tenant1.start();
-    tenant0.join();
-    return 0;
-}
+    //unsigned long queued; //From CUPTI API record
+    unsigned long m_g_x;
+    unsigned long m_active;
+    unsigned long m_idle;
+    Record(unsigned long, unsigned long, unsigned long);
+};
 
+typedef std::vector<Record> RecordVec;
+
+struct GlobalWindow
+{
+  RecordVec m_recs;
+  std::mutex m_mutex;
+  bool m_stale;
+  GlobalWindow();
+  ~GlobalWindow();
+  void produce(RecordVec r);
+  RecordVec consume();
+};
+
+#endif

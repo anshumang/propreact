@@ -64,8 +64,8 @@ void CUPTIAPI return_buffer(CUcontext ctx, uint32_t stream_id, uint8_t *buffer, 
   free(buffer);
 }
 
-CuptiProfiler::CuptiProfiler(Window *win)
-  :m_tot_records(0), m_curr_records(0), m_last(0), m_last_api(0), m_tot_disjoint_records(0), m_win(win)
+CuptiProfiler::CuptiProfiler(Window *win, GlobalWindow *gwin)
+  :m_tot_records(0), m_curr_records(0), m_last(0), m_last_api(0), m_tot_disjoint_records(0), m_win(win), m_gwin(gwin)
 {
   std::cout << "CuptiProfiler CTOR" << std::endl;
   size_t attr_val_size = sizeof(size_t);
@@ -217,6 +217,7 @@ void CuptiProfiler::process()
    }
    /*run another pass to generate (start, end) -> (active, idle)*/
    count = 0;
+   RecordVec rv;
    if(m_tot_disjoint_records > 0)
    {
        unsigned long active, idle;
@@ -232,6 +233,8 @@ void CuptiProfiler::process()
        //CuptiTuple tup(active, idle);
        m_win->WriteDataIdle(k, idle);
        m_win->WriteDataActive(k, active);
+       Record r(k.x, active, idle);
+       rv.push_back(r);
    }
    while(count < disjoint_records-1)
    {
@@ -249,8 +252,11 @@ void CuptiProfiler::process()
       //CuptiTuple tup(active, idle);
       m_win->WriteDataIdle(k, idle);
       m_win->WriteDataActive(k, active);
+      Record r(k.x, active, idle);
+      rv.push_back(r);
       count++;
    }
+   m_gwin->produce(rv);
    m_tot_disjoint_records+=disjoint_records;
    //std::cout << "cupti process end---> " << m_keyval_vec.size() << " " << m_tup_vec.size() << std::endl;
 }
