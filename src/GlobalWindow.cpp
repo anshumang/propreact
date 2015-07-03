@@ -67,6 +67,10 @@ void GlobalWindow::produce(RecordVec r)
            m_recs.pop_back();
       }
    }
+   for(int i=0; i<r.size(); i++)
+   {
+      //std::cout << m_recs[i].m_g_x << " " << m_recs[i].m_active << " " << m_recs[i].m_idle << std::endl;
+   }
    m_stale = false;
    m_mutex.unlock();
 }
@@ -80,6 +84,11 @@ RecordVec GlobalWindow::consume()
    {
       std::copy(m_recs.begin(), m_recs.end(), std::back_inserter(r));
       m_stale = true;
+      for(int i=0; i<r.size(); i++)
+      {
+         //std::cout << r[i].m_g_x << " " << r[i].m_active << " " << r[i].m_idle << std::endl;
+         //std::cout << m_recs[i].m_g_x << " " << m_recs[i].m_active << " " << m_recs[i].m_idle << std::endl;
+      }
    }
    m_mutex.unlock();
    return r;

@@ -101,7 +101,11 @@ void CuptiProfiler::insert(CUpti_Activity *record)
   m_curr_records++;
   if((record->kind == CUPTI_ACTIVITY_KIND_CONCURRENT_KERNEL)||(record->kind == CUPTI_ACTIVITY_KIND_KERNEL))
   {
+#ifdef _CUDA_6_5_
       CUpti_ActivityKernel2 *kernel = (CUpti_ActivityKernel2 *) record;
+#else
+      CUpti_ActivityKernel3 *kernel = (CUpti_ActivityKernel3 *) record;
+#endif
       CuptiTuple curr_tup(kernel->start-m_start, kernel->end-m_start);
       if(m_last)
       {

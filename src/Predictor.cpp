@@ -99,16 +99,44 @@ void Predictor::ProcessTrigger()
       std::string req("REQUEST");
       //std::cout << "I : Before send " << sizeof(req) << std::endl;
       int bytes=0;
-      assert((bytes = m_req_comm->send(req.c_str(), req.length()+1))>=0);    
+      //char *buff = new char[(2+(3*r.size()))*sizeof(unsigned long)];
+      char *buff = (char *)&m_pkt[0];
+      unsigned long pkt_size=(2+(3*r.size()))*sizeof(unsigned long);
+      std::memcpy(buff, &pkt_size, sizeof(unsigned long));
+      std::memcpy(buff+sizeof(unsigned long), &g.x, sizeof(unsigned long));
+      //std::cout << m_pkt[0]/sizeof(unsigned long) << std::endl;
+      //std::cout << m_pkt[1] << std::endl;
+      for(int i=0; i<r.size(); i++)
+      {
+         //std::cout << r[i].m_g_x << " " << r[i].m_active << " " << r[i].m_idle << std::endl;
+         std::memcpy(buff+(2+3*i)*sizeof(unsigned long), &r[i].m_g_x, sizeof(unsigned long));
+         std::memcpy(buff+(3+3*i)*sizeof(unsigned long), &r[i].m_active, sizeof(unsigned long));
+         std::memcpy(buff+(4+3*i)*sizeof(unsigned long), &r[i].m_idle, sizeof(unsigned long));
+         //std::cout << m_pkt[2+3*i] << " " << m_pkt[3+3*i] << " " << m_pkt[4+3*i] << std::endl;
+      }
+      //assert((bytes = m_req_comm->send(req.c_str(), req.length()+1))>=0);    
+      //std::cout << "--- " << pkt_size/sizeof(unsigned long) << " " << r.size() << " " << (pkt_size/sizeof(unsigned long)-2)/3 << std::endl;
+      std::cout << m_pkt[0]/sizeof(unsigned long) << std::endl;
+      std::cout << m_pkt[1] << std::endl;
+      for(int i=0; i<(pkt_size/sizeof(unsigned long)-2)/3; i++)
+      {
+          //std::cout << *((unsigned long *)buff+i) << std::endl;
+          std::cout << m_pkt[2+3*i] << " " << m_pkt[3*i+3] << " " << m_pkt[3*i+4] << std::endl;
+      }
+#if 1
+      assert((bytes = m_req_comm->send(buff, pkt_size))>=0);    
       while(true)
       {
          void *buf = NULL;
          int bytes = m_resp_comm->receive(&buf);
-         std::cout << "I : After receive" << std::endl;
+         std::cout << "I : aka After receive" << std::endl;
          assert(bytes >= 0);
          m_req_comm->freemsg(buf);
          m_trig->Notify(2);
          break;
       }
+#endif
+      //delete buff;
+      //m_trig->Notify(2);
    }
 }

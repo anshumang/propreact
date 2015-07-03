@@ -20,6 +20,8 @@
 #ifndef _PREDICTOR_H
 #define _PREDICTOR_H
 
+#include <array>
+#include <cstring>
 #include <thread>
 #include <cstddef>
 #include <iostream>
@@ -36,6 +38,7 @@ struct Predictor
    GlobalWindow* m_gwin;
    long m_last, m_start_lib, m_end_lib;
    bool m_lib;
+   std::array</*char*/unsigned long, 1024> m_pkt; //sizeof(unsigned long) = 8, 2x8 + 3x8 per record, >40 records
    Predictor(std::string req_url, std::string resp_url, Trigger*, Window*, GlobalWindow*);
    ~Predictor();
    void ProcessTrigger();

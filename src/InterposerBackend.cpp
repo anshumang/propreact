@@ -50,6 +50,14 @@ void InterposerBackend::process()
        void *buf = NULL;
        //std::cout << "IB : Before receive" << std::endl;
        int bytes = m_req_comm->receive(&buf);
+       unsigned long *pkt = (unsigned long*)buf;
+       std::cout << pkt[0]/sizeof(unsigned long) << std::endl;
+       std::cout << pkt[1] << std::endl;
+       for(int i=0; i<(pkt[0]/sizeof(unsigned long)-2)/3; i++)
+       {
+          //std::cout << *((unsigned long *)buff+i) << std::endl;
+          std::cout << pkt[2+3*i] << " " << pkt[3*i+3] << " " << pkt[3*i+4] << std::endl;
+       }
        std::cout << "IB : After receive" << std::endl;
        assert(bytes >= 0);
        m_req_comm->freemsg(buf);
