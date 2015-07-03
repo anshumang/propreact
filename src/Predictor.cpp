@@ -21,15 +21,20 @@
 
 Predictor *p_predictor = NULL;
 
-Predictor::Predictor(Trigger* trig, Window *win, GlobalWindow *gwin)
+Predictor::Predictor(std::string req_url, std::string resp_url, Trigger* trig, Window *win, GlobalWindow *gwin)
   : m_trig(trig), m_win(win), m_last(0), m_lib(false), m_start_lib(0), m_end_lib(0), m_gwin(gwin)
 {
    m_thr = std::thread(&Predictor::ProcessTrigger, this);
+   m_req_comm = new Communicator(req_url, SENDER);
+   m_req_comm->connect();
+   m_resp_comm = new Communicator(resp_url, RECEIVER);
+   m_resp_comm->bind();
 }
 
 Predictor::~Predictor()
 {
-
+    delete m_req_comm;
+    delete m_resp_comm;
 }
 
 void Predictor::ProcessTrigger()
@@ -42,7 +47,8 @@ void Predictor::ProcessTrigger()
       Grid g;
       m_trig->ReadData(&g);
       //std::cout << g.x << " " << g.y << " " << g.z << std::endl;
-      m_trig->Notify(2);
+/*Notify after response from daemon, may choose to not contact daemon and then, Interposer released quicker*/
+      //m_trig->Notify(2);
       if((g.x==0)&&(g.y==0)&&(!m_lib))
       {
          /*start library kernels active on GPU*/
@@ -50,6 +56,7 @@ void Predictor::ProcessTrigger()
 	 gettimeofday(&now, NULL);
 	 long now_t = now.tv_sec*1000000 + now.tv_usec;
          m_start_lib = now_t;
+         m_trig->Notify(2);
          continue;
       }
       else if((g.x==1)&&(g.y==0)&&(!m_lib))
@@ -62,6 +69,7 @@ void Predictor::ProcessTrigger()
          m_lib = true;
          //unsigned long idle = m_win->ReadDataIdle(g);
          //std::cout << "X 0 " << m_end_lib - m_start_lib << " " << idle << std::endl;
+         m_trig->Notify(2);
          continue; 
       }
 
@@ -88,5 +96,19 @@ void Predictor::ProcessTrigger()
       //std::cout << active << "\n" << idle << std::endl;
 
       //m_last = active+idle;
+      std::string req("REQUEST");
+      //std::cout << "I : Before send " << sizeof(req) << std::endl;
+      int bytes=0;
+      assert((bytes = m_req_comm->send(req.c_str(), req.length()+1))>=0);    
+      while(true)
+      {
+         void *buf = NULL;
+         int bytes = m_resp_comm->receive(&buf);
+         std::cout << "I : After receive" << std::endl;
+         assert(bytes >= 0);
+         m_req_comm->freemsg(buf);
+         m_trig->Notify(2);
+         break;
+      }
    }
 }

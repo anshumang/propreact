@@ -29,10 +29,10 @@ struct Interposer
 {
    unsigned long m_last;
    Trigger* m_trig;
-   Interposer(std::string req_url, std::string resp_url, Trigger* trig);
+   Interposer(/*std::string req_url, std::string resp_url,*/ Trigger* trig);
    ~Interposer();
    void launch(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
-   Communicator *m_req_comm, *m_resp_comm;
+   //Communicator *m_req_comm, *m_resp_comm;
 };
 
 #endif

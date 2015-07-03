@@ -21,20 +21,22 @@
 
 Interposer *p_interposer = NULL;
 
-Interposer::Interposer(std::string req_url, std::string resp_url, Trigger* trig)
+Interposer::Interposer(/*std::string req_url, std::string resp_url,*/ Trigger* trig)
   : m_last(0), m_trig(trig)
 {
     std::cout << "Interposer CTOR" << std::endl;
+/*
     m_req_comm = new Communicator(req_url, SENDER);
     m_req_comm->connect();
     m_resp_comm = new Communicator(resp_url, RECEIVER);
     m_resp_comm->bind();
+*/
 }
 
 Interposer::~Interposer()
 {
-    delete m_req_comm;
-    delete m_resp_comm;
+    //delete m_req_comm;
+    //delete m_resp_comm;
 }
 
 void Interposer::launch(unsigned long gridX, unsigned long gridY, unsigned long gridZ, unsigned long blockX, unsigned long blockY, unsigned long blockZ)
@@ -49,6 +51,7 @@ void Interposer::launch(unsigned long gridX, unsigned long gridY, unsigned long 
     m_trig->WriteData(g);
     m_trig->Notify(1);
     m_trig->Wait(2);
+#if 0
     std::string req("REQUEST");
     //std::cout << "I : Before send " << sizeof(req) << std::endl;
     int bytes=0;
@@ -62,4 +65,5 @@ void Interposer::launch(unsigned long gridX, unsigned long gridY, unsigned long 
        m_req_comm->freemsg(buf);
        break;
     }
+#endif
 }

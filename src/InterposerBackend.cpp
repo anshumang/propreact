@@ -50,7 +50,7 @@ void InterposerBackend::process()
        void *buf = NULL;
        //std::cout << "IB : Before receive" << std::endl;
        int bytes = m_req_comm->receive(&buf);
-       //std::cout << "IB : After receive" << std::endl;
+       std::cout << "IB : After receive" << std::endl;
        assert(bytes >= 0);
        m_req_comm->freemsg(buf);
        std::string resp("RESPONSE");

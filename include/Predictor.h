@@ -36,9 +36,10 @@ struct Predictor
    GlobalWindow* m_gwin;
    long m_last, m_start_lib, m_end_lib;
    bool m_lib;
-   Predictor(Trigger*, Window*, GlobalWindow*);
+   Predictor(std::string req_url, std::string resp_url, Trigger*, Window*, GlobalWindow*);
    ~Predictor();
    void ProcessTrigger();
+   Communicator *m_req_comm, *m_resp_comm;
 };
 
 #endif
