@@ -24,6 +24,10 @@
 #include <mutex>
 #include <algorithm>
 #include <iostream>
+#include <queue>
+#include <map>
+#include <deque>
+#include <utility>
 
 struct Record
 {
@@ -35,12 +39,33 @@ struct Record
 };
 
 typedef std::vector<Record> RecordVec;
+typedef std::pair<unsigned long, unsigned long> ActiveIdlePair;
 
+struct CompareIdleMin
+{
+public:
+    bool operator()(ActiveIdlePair n1, ActiveIdlePair n2) {
+        return n1.second<n2.second;
+    }
+};
+
+struct CompareActiveMax
+{
+public:
+    bool operator()(ActiveIdlePair n1, ActiveIdlePair n2) {
+        return n1.first>n1.first;
+    }
+};
 struct GlobalWindow
 {
   RecordVec m_recs;
   std::mutex m_mutex;
   bool m_stale;
+  typedef unsigned long ExperimentalKey;
+  typedef std::priority_queue<ActiveIdlePair, std::deque<ActiveIdlePair>, CompareIdleMin> IdleMinQueue; 
+  typedef std::priority_queue<ActiveIdlePair, std::deque<ActiveIdlePair>, CompareActiveMax> ActiveMaxQueue; 
+  typedef std::map<ExperimentalKey, IdleMinQueue> IdleMap;
+  typedef std::map<ExperimentalKey, ActiveMaxQueue> ActiveMap;
   GlobalWindow();
   ~GlobalWindow();
   void produce(RecordVec r);

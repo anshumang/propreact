@@ -25,7 +25,7 @@ int main(int argc, const char **argv)
     RequestPool reqpool;
     InterposerBackend tenant0("ipc:///tmp/propreact0b.ipc", "ipc:///tmp/propreact0a.ipc", 0, &reqpool);
     tenant0.start();
-    InterposerBackend tenant1("ipc:///tmp/propreact1b.ipc", "ipc:///tmp/propreact1a.ipc", 0, &reqpool);
+    InterposerBackend tenant1("ipc:///tmp/propreact1b.ipc", "ipc:///tmp/propreact1a.ipc", 1, &reqpool);
     tenant1.start();
     tenant0.join();
     return 0;

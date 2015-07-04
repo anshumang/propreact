@@ -35,6 +35,7 @@ struct InterposerBackend
     std::thread m_thr;
     Communicator *m_req_comm, *m_resp_comm;
     RequestPool *m_req_pool;
+    int m_tenant_id;
 };
 
 #endif

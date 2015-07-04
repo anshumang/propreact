@@ -20,6 +20,7 @@
 #include "InterposerBackend.h"
 
 InterposerBackend::InterposerBackend(std::string req_url, std::string resp_url, int tenant_id, RequestPool *req_pool)
+   : m_tenant_id(tenant_id), m_req_pool(req_pool)
 {
     m_req_comm = new Communicator(req_url, RECEIVER);
     m_req_comm->bind();
