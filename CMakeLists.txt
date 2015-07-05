@@ -24,6 +24,6 @@ project(propreact-backend)
 
 include_directories(include ../include /usr/include /usr/include /usr/local/cuda/include /opt/data1/share/users/anshuman/nanomsg/src)
 
-add_executable(propreact-backend src/BackendDriver.cpp src/Communicator.cpp src/InterposerBackend.cpp src/RequestPool.cpp)
+add_executable(propreact-backend src/BackendDriver.cpp src/Communicator.cpp src/InterposerBackend.cpp src/RequestPool.cpp src/GlobalWindow.cpp)
 
 target_link_libraries(propreact-backend nanomsg)

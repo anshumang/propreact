@@ -19,8 +19,8 @@
 
 #include "InterposerBackend.h"
 
-InterposerBackend::InterposerBackend(std::string req_url, std::string resp_url, int tenant_id, RequestPool *req_pool)
-   : m_tenant_id(tenant_id), m_req_pool(req_pool)
+InterposerBackend::InterposerBackend(std::string req_url, std::string resp_url, int tenant_id, RequestPool *req_pool, GlobalWindow *gwin)
+   : m_tenant_id(tenant_id), m_req_pool(req_pool), m_gwin(gwin)
 {
     m_req_comm = new Communicator(req_url, RECEIVER);
     m_req_comm->bind();
@@ -58,6 +58,14 @@ void InterposerBackend::process()
        {
           //std::cout << *((unsigned long *)buff+i) << std::endl;
           std::cout << pkt[2+3*i] << " " << pkt[3*i+3] << " " << pkt[3*i+4] << std::endl;
+          if(m_tenant_id == 0)
+          {
+             m_gwin->update_idle(pkt[2+3*i], pkt[3*i+3], pkt[3*i+4], m_tenant_id);
+          }
+          else
+          {
+             m_gwin->update_active(pkt[2+3*i], pkt[3*i+3], pkt[3*i+4], m_tenant_id);
+          }
        }
        std::cout << "IB : After receive" << std::endl;
        assert(bytes >= 0);

@@ -27,10 +27,25 @@ Record::Record(unsigned long gx, unsigned long active, unsigned long idle)
 }
 
 GlobalWindow::GlobalWindow()
-  : m_stale(true)
+  : m_stale(true), m_tenants(2)
 {
    m_mutex.lock();
    std::cout << "aka GlobalWindow CTOR " << m_recs.size() << std::endl;
+   for(int i=0; i<m_tenants; i++)
+   {
+      ActiveIdlePair dummyp(0,0);
+      IdleMinQueue minq;
+      minq.push(dummyp);
+      ActiveMaxQueue maxq;
+      maxq.push(dummyp);
+      IdleMap imap;
+      imap.insert(std::make_pair(0, minq));
+      ActiveMap amap;
+      amap.insert(std::make_pair(0, maxq));
+      m_tenants_idle_map_vector.push_back(imap);
+      m_tenants_active_map_vector.push_back(amap);
+   }
+   std::cout << m_tenants_idle_map_vector.size() << " " << m_tenants_active_map_vector.size() << std::endl;
    m_mutex.unlock();
 }
 
@@ -92,4 +107,59 @@ RecordVec GlobalWindow::consume()
    }
    m_mutex.unlock();
    return r;
+}
+
+void GlobalWindow::update_idle(ExperimentalKey k, unsigned long va, unsigned long vi, unsigned int t)
+{
+   auto searchm = m_tenants_idle_map_vector[t];
+   auto searchmq = searchm.find(k);
+   if(searchmq == searchm.end())
+   {
+      IdleMinQueue minq;
+      minq.push(std::make_pair(va, vi));
+      m_tenants_idle_map_vector[t].insert(std::make_pair(k,minq));
+      auto searchmqq = m_tenants_idle_map_vector[t].find(k);
+      std::cout << "[not found] update_idle after " << m_tenants_idle_map_vector[t].size() << " " << searchmqq->second.size() << std::endl;
+      return;
+   }
+   IdleMinQueue minq(searchmq->second);
+   minq.push(std::make_pair(va, vi));
+   //std::cout << "[found] size of IdleMinQueue to insert " << searchmq->second.size() << " " << minq.size() << std::endl;
+   m_tenants_idle_map_vector[t].erase(/*searchmq*/k);
+   //std::cout << "[found] erase " << m_tenants_idle_map_vector[t].size() << std::endl;
+   m_tenants_idle_map_vector[t].emplace(std::make_pair(k, minq));
+   //std::cout << "[found] insert " << m_tenants_idle_map_vector[t].size() << std::endl;
+   auto searchmqq = m_tenants_idle_map_vector[t].find(k);
+   std::cout << "[found] update_idle after " << m_tenants_idle_map_vector[t].size() << " " << searchmqq->second.size() << std::endl;
+}
+
+void GlobalWindow::update_active(ExperimentalKey k, unsigned long va, unsigned long vi, unsigned int t)
+{
+   auto searchm = m_tenants_active_map_vector[t];
+   auto searchmq = searchm.find(k);
+   if(searchmq == searchm.end())
+   {
+      ActiveMaxQueue maxq;
+      maxq.push(std::make_pair(va, vi));
+      m_tenants_active_map_vector[t].insert(std::make_pair(k,maxq));
+      auto searchmqq = m_tenants_active_map_vector[t].find(k);
+      std::cout << "[not found] update_active after " << m_tenants_active_map_vector[t].size() << " " << searchmqq->second.size() << std::endl;
+      return;
+   }
+   ActiveMaxQueue maxq(searchmq->second);
+   maxq.push(std::make_pair(va, vi));
+   m_tenants_active_map_vector[t].erase(/*searchmq*/k);
+   m_tenants_active_map_vector[t].emplace(std::make_pair(k, maxq));
+   auto searchmqq = m_tenants_active_map_vector[t].find(k);
+   std::cout << "[found] update_active after " << m_tenants_active_map_vector[t].size() << " " << searchmqq->second.size() << std::endl;
+}
+
+unsigned long GlobalWindow::retrieve_idle(ExperimentalKey k, unsigned int t)
+{
+
+}
+
+unsigned long GlobalWindow::retrieve_active(ExperimentalKey k, unsigned int t)
+{
+
 }

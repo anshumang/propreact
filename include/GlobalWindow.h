@@ -61,15 +61,25 @@ struct GlobalWindow
   RecordVec m_recs;
   std::mutex m_mutex;
   bool m_stale;
+  unsigned int m_tenants;
   typedef unsigned long ExperimentalKey;
   typedef std::priority_queue<ActiveIdlePair, std::deque<ActiveIdlePair>, CompareIdleMin> IdleMinQueue; 
   typedef std::priority_queue<ActiveIdlePair, std::deque<ActiveIdlePair>, CompareActiveMax> ActiveMaxQueue; 
   typedef std::map<ExperimentalKey, IdleMinQueue> IdleMap;
   typedef std::map<ExperimentalKey, ActiveMaxQueue> ActiveMap;
+  //IdleMap m_tenant_idle_map; //May need a vector for all tenants' idle map
+  typedef std::vector<IdleMap> IdleMapVector;
+  IdleMapVector m_tenants_idle_map_vector; //for now, only for tenant 0 (e.g., simulation)
+  typedef std::vector<ActiveMap> ActiveMapVector;
+  ActiveMapVector m_tenants_active_map_vector;
   GlobalWindow();
   ~GlobalWindow();
   void produce(RecordVec r);
   RecordVec consume();
+  void update_idle(ExperimentalKey k, unsigned long va, unsigned long vi, unsigned int t);
+  void update_active(ExperimentalKey k, unsigned long va, unsigned long vi, unsigned int t);
+  unsigned long retrieve_idle(ExperimentalKey k, unsigned int t);
+  unsigned long retrieve_active(ExperimentalKey k, unsigned int t);
 };
 
 #endif

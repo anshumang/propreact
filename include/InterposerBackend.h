@@ -24,10 +24,11 @@
 #include <iostream>
 #include "Communicator.h"
 #include "RequestPool.h"
+#include "GlobalWindow.h"
 
 struct InterposerBackend
 {
-    InterposerBackend(std::string req_url, std::string resp_url, int tenant_id, RequestPool *req_pool);
+    InterposerBackend(std::string req_url, std::string resp_url, int tenant_id, RequestPool *req_pool, GlobalWindow *gwin);
     ~InterposerBackend();
     void start();
     void join();
@@ -36,6 +37,7 @@ struct InterposerBackend
     Communicator *m_req_comm, *m_resp_comm;
     RequestPool *m_req_pool;
     int m_tenant_id;
+    GlobalWindow *m_gwin;
 };
 
 #endif
