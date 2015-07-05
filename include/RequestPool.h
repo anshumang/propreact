@@ -20,10 +20,22 @@
 #ifndef _REQUEST_POOL_H
 #define _REQUEST_POOL_H
 
+#include <utility>
+#include <map>
+#include <cassert>
+
+typedef unsigned long ExperimentalKey;
+
 struct RequestPool
 {
     RequestPool();
     ~RequestPool();
+    unsigned int m_num_tenants;
+    typedef std::pair<unsigned int, unsigned long> TenantIdExperimentalKeyPair;
+    typedef std::map<unsigned int, unsigned long> TenantIdExperimentalKeyMap; 
+    TenantIdExperimentalKeyMap m_tenant_requests;
+    void update(TenantIdExperimentalKeyPair p);
+    ExperimentalKey retrieve(unsigned int t);
 };
 
 #endif

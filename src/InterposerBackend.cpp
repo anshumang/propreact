@@ -54,6 +54,7 @@ void InterposerBackend::process()
        unsigned long *pkt = (unsigned long*)buf;
        std::cout << pkt[0]/sizeof(unsigned long) << std::endl;
        std::cout << pkt[1] << std::endl;
+       m_req_pool->update(std::make_pair(m_tenant_id, pkt[1]));
        for(int i=0; i<(pkt[0]/sizeof(unsigned long)-2)/3; i++)
        {
           //std::cout << *((unsigned long *)buff+i) << std::endl;

@@ -20,6 +20,7 @@
 #include "RequestPool.h"
 
 RequestPool::RequestPool()
+  :m_num_tenants(2)
 {
 
 }
@@ -27,4 +28,25 @@ RequestPool::RequestPool()
 RequestPool::~RequestPool()
 {
 
+}
+
+void RequestPool::update(TenantIdExperimentalKeyPair p)
+{
+    //for(auto search = m_tenant_requests.begin(); search != m_tenant_requests.end(); search++)
+    //{
+       //assert(search.first != p.first); //Request and response are synchronous, there shouldn't be pending requests when a new request arrives from a tenant
+    //}
+    assert(m_tenant_requests.find(p.first) == m_tenant_requests.end());
+    m_tenant_requests.insert(std::make_pair(p.first, p.second));
+}
+
+ExperimentalKey RequestPool::retrieve(unsigned int t)
+{
+    ExperimentalKey k=0; 
+    if (m_tenant_requests.find(t) != m_tenant_requests.end())
+    {
+       k = m_tenant_requests[t];
+    }
+    m_tenant_requests.erase(t);
+    return k;
 }
