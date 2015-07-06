@@ -135,6 +135,7 @@ void GlobalWindow::update_idle(ExperimentalKey k, unsigned long va, unsigned lon
 
 void GlobalWindow::update_active(ExperimentalKey k, unsigned long va, unsigned long vi, unsigned int t)
 {
+   m_mutex.lock();
    auto searchm = m_tenants_active_map_vector[t];
    auto searchmq = searchm.find(k);
    if(searchmq == searchm.end())
@@ -143,7 +144,7 @@ void GlobalWindow::update_active(ExperimentalKey k, unsigned long va, unsigned l
       maxq.push(std::make_pair(va, vi));
       m_tenants_active_map_vector[t].insert(std::make_pair(k,maxq));
       auto searchmqq = m_tenants_active_map_vector[t].find(k);
-      std::cout << "[not found] update_active after " << m_tenants_active_map_vector[t].size() << " " << searchmqq->second.size() << std::endl;
+      //std::cout << "[not found] update_active after " << m_tenants_active_map_vector[t].size() << " " << searchmqq->second.size() << std::endl;
       return;
    }
    ActiveMaxQueue maxq(searchmq->second);
@@ -151,15 +152,21 @@ void GlobalWindow::update_active(ExperimentalKey k, unsigned long va, unsigned l
    m_tenants_active_map_vector[t].erase(/*searchmq*/k);
    m_tenants_active_map_vector[t].emplace(std::make_pair(k, maxq));
    auto searchmqq = m_tenants_active_map_vector[t].find(k);
-   std::cout << "[found] update_active after " << m_tenants_active_map_vector[t].size() << " " << searchmqq->second.size() << std::endl;
+   //std::cout << "[found] update_active after " << m_tenants_active_map_vector[t].size() << " " << searchmqq->second.size() << std::endl;
+   m_mutex.unlock();
 }
 
-unsigned long GlobalWindow::retrieve_idle(ExperimentalKey k, unsigned int t)
+unsigned long GlobalWindow::retrieve_idle(unsigned int t, ExperimentalKey k)
 {
-
+    m_mutex.lock();
+    m_mutex.unlock();
+    return 0;
 }
 
-unsigned long GlobalWindow::retrieve_active(ExperimentalKey k, unsigned int t)
+unsigned long GlobalWindow::retrieve_active(unsigned int t, ExperimentalKey k)
 {
-
+    m_mutex.lock();
+    m_mutex.unlock();
+    return 0;
 }
+

@@ -22,7 +22,10 @@
 
 #include <utility>
 #include <map>
+#include <array>
 #include <cassert>
+#include <mutex>
+#include <condition_variable>
 
 typedef unsigned long ExperimentalKey;
 
@@ -33,9 +36,15 @@ struct RequestPool
     unsigned int m_num_tenants;
     typedef std::pair<unsigned int, unsigned long> TenantIdExperimentalKeyPair;
     typedef std::map<unsigned int, unsigned long> TenantIdExperimentalKeyMap; 
+    std::array<bool, 2> m_tenant_ready;
+    std::array<std::mutex, 2> m_tenant_mutex;
+    std::array<std::condition_variable, 2> m_tenant_notify;
+    std::mutex m_mutex; 
     TenantIdExperimentalKeyMap m_tenant_requests;
     void update(TenantIdExperimentalKeyPair p);
     ExperimentalKey retrieve(unsigned int t);
+    void wait(int);
+    void release(int);
 };
 
 #endif

@@ -36,17 +36,36 @@ void RequestPool::update(TenantIdExperimentalKeyPair p)
     //{
        //assert(search.first != p.first); //Request and response are synchronous, there shouldn't be pending requests when a new request arrives from a tenant
     //}
+    m_mutex.lock();
     assert(m_tenant_requests.find(p.first) == m_tenant_requests.end());
     m_tenant_requests.insert(std::make_pair(p.first, p.second));
+    m_mutex.unlock();
 }
 
 ExperimentalKey RequestPool::retrieve(unsigned int t)
 {
     ExperimentalKey k=0; 
+    m_mutex.lock();
     if (m_tenant_requests.find(t) != m_tenant_requests.end())
     {
        k = m_tenant_requests[t];
     }
     m_tenant_requests.erase(t);
+    m_mutex.unlock();
     return k;
+}
+
+void RequestPool::wait(int t)
+{
+    std::unique_lock<std::mutex> lk(m_tenant_mutex[t]);
+    m_tenant_notify[t].wait(lk, [this, t]{return m_tenant_ready[t];});
+    m_tenant_ready[t] = false;
+    lk.unlock();
+}
+
+void RequestPool::release(int t)
+{
+    std::lock_guard<std::mutex> lk(m_tenant_mutex[t]);
+    m_tenant_ready[t] = true;
+    m_tenant_notify[t].notify_one();
 }

@@ -69,6 +69,7 @@ void InterposerBackend::process()
           }
        }
        std::cout << "IB : After receive" << std::endl;
+       m_req_pool->wait(m_tenant_id);
        assert(bytes >= 0);
        m_req_comm->freemsg(buf);
        std::string resp("RESPONSE");

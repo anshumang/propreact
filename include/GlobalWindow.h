@@ -28,6 +28,7 @@
 #include <map>
 #include <deque>
 #include <utility>
+#include <mutex>
 
 struct Record
 {
@@ -78,8 +79,8 @@ struct GlobalWindow
   RecordVec consume();
   void update_idle(ExperimentalKey k, unsigned long va, unsigned long vi, unsigned int t);
   void update_active(ExperimentalKey k, unsigned long va, unsigned long vi, unsigned int t);
-  unsigned long retrieve_idle(ExperimentalKey k, unsigned int t);
-  unsigned long retrieve_active(ExperimentalKey k, unsigned int t);
+  unsigned long retrieve_idle(unsigned int t, ExperimentalKey k);
+  unsigned long retrieve_active(unsigned int t, ExperimentalKey k);
 };
 
 #endif
