@@ -20,9 +20,9 @@
 #ifndef _XRUSH_EXTERNAL_H
 #define _XRUSH_EXTERNAL_H
 
-void XrushCreate(char*, char*);
-void XrushDestroy();
-void XrushProfile();
-void XrushLaunch(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
+extern "C" void XrushCreate(char*, char*);
+extern "C" void XrushDestroy();
+extern "C" void XrushProfile();
+extern "C" void XrushLaunch(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
 
 #endif

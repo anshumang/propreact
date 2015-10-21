@@ -48,7 +48,12 @@ void Arbiter::process()
         for(int t=0; t<m_num_tenants; t++)
         {
             ExperimentalKey k = m_req_pool->retrieve(t);
-            tenants_with_requests.insert(std::make_pair(t,k));
+            if(k>0){
+              tenants_with_requests.insert(std::make_pair(t,k));
+            }
+        }
+        if(tenants_with_requests.size()>0){
+          std::cerr << "Arbiter::process found " << tenants_with_requests.size() << " requests" << std::endl;
         }
         std::set<unsigned int> tenants_to_be_responded;
         /*for now, simply adds the lookup cost*/
@@ -66,6 +71,9 @@ void Arbiter::process()
                  m_gwin->retrieve_active(search->first, search->second);
                  tenants_to_be_responded.insert(search->first);
              }
+        }
+        if(tenants_to_be_responded.size()>0){
+          std::cerr << "Arbiter::process found " << tenants_to_be_responded.size() << " responses" << std::endl;
         }
         for(auto search=tenants_to_be_responded.begin();
             search!=tenants_to_be_responded.end();

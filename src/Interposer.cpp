@@ -47,7 +47,7 @@ void Interposer::launch(unsigned long gridX, unsigned long gridY, unsigned long 
     //std::cout << curr - m_last << " " << gridX << " " << gridY << " " << gridZ << " " << blockX << " " << blockY << " " << blockZ << std::endl;
     m_last = curr;
     Grid g(gridX, gridY, gridZ);
-    //std::cout << "I " << g.x << std::endl;
+    std::cerr << "Interposer::launch " << g.x << std::endl;
     m_trig->WriteData(g);
     m_trig->Notify(1);
     m_trig->Wait(2);

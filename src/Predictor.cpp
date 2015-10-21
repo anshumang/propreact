@@ -25,9 +25,13 @@ Predictor::Predictor(std::string req_url, std::string resp_url, Trigger* trig, W
   : m_trig(trig), m_win(win), m_last(0), m_lib(false), m_start_lib(0), m_end_lib(0), m_gwin(gwin)
 {
    m_thr = std::thread(&Predictor::ProcessTrigger, this);
-   m_req_comm = new Communicator(req_url, SENDER);
+   //m_req_comm = new Communicator(req_url, SENDER);
+   std::string l_req_url = "ipc:///tmp/propreact0b.ipc";
+   m_req_comm = new Communicator(l_req_url, SENDER);
    m_req_comm->connect();
-   m_resp_comm = new Communicator(resp_url, RECEIVER);
+   //m_resp_comm = new Communicator(resp_url, RECEIVER);
+   std::string l_resp_url = "ipc:///tmp/propreact0a.ipc";
+   m_resp_comm = new Communicator(l_resp_url, RECEIVER);
    m_resp_comm->bind();
 }
 
@@ -46,7 +50,7 @@ void Predictor::ProcessTrigger()
       //std::cout << "New trigger received" << std::endl;;
       Grid g;
       m_trig->ReadData(&g);
-      //std::cout << g.x << " " << g.y << " " << g.z << std::endl;
+      std::cerr << "Predictor::ProcessTrigger " << g.x << " " << g.y << " " << g.z << std::endl;
 /*Notify after response from daemon, may choose to not contact daemon and then, Interposer released quicker*/
       //m_trig->Notify(2);
       if((g.x==0)&&(g.y==0)&&(!m_lib))

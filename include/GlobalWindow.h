@@ -33,7 +33,7 @@
 struct Record
 {
     //unsigned long queued; //From CUPTI API record
-    unsigned long m_g_x;
+    unsigned long m_g_x; /*grid.x - WHY? works for GTC-P*/
     unsigned long m_active;
     unsigned long m_idle;
     Record(unsigned long, unsigned long, unsigned long);

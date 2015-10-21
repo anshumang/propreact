@@ -30,7 +30,7 @@ GlobalWindow::GlobalWindow()
   : m_stale(true), m_tenants(2)
 {
    m_mutex.lock();
-   std::cout << "aka GlobalWindow CTOR " << m_recs.size() << std::endl;
+   //std::cout << "aka GlobalWindow CTOR " << m_recs.size() << std::endl;
    for(int i=0; i<m_tenants; i++)
    {
       ActiveIdlePair dummyp(0,0);
@@ -45,7 +45,7 @@ GlobalWindow::GlobalWindow()
       m_tenants_idle_map_vector.push_back(imap);
       m_tenants_active_map_vector.push_back(amap);
    }
-   std::cout << m_tenants_idle_map_vector.size() << " " << m_tenants_active_map_vector.size() << std::endl;
+   //std::cout << m_tenants_idle_map_vector.size() << " " << m_tenants_active_map_vector.size() << std::endl;
    m_mutex.unlock();
 }
 
@@ -159,6 +159,8 @@ void GlobalWindow::update_active(ExperimentalKey k, unsigned long va, unsigned l
 unsigned long GlobalWindow::retrieve_idle(unsigned int t, ExperimentalKey k)
 {
     m_mutex.lock();
+    auto searchm = m_tenants_idle_map_vector[t];
+    auto searchmq = searchm.find(k);
     m_mutex.unlock();
     return 0;
 }
@@ -166,6 +168,8 @@ unsigned long GlobalWindow::retrieve_idle(unsigned int t, ExperimentalKey k)
 unsigned long GlobalWindow::retrieve_active(unsigned int t, ExperimentalKey k)
 {
     m_mutex.lock();
+    auto searchm = m_tenants_active_map_vector[t];
+    auto searchmq = searchm.find(k);
     m_mutex.unlock();
     return 0;
 }

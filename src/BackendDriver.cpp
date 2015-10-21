@@ -20,11 +20,14 @@
 #include "RequestPool.h"
 #include "InterposerBackend.h"
 #include "GlobalWindow.h"
+#include "Arbiter.h"
 
 int main(int argc, const char **argv)
 {
     RequestPool reqpool;
     GlobalWindow gwin;
+    Arbiter arb(&reqpool, &gwin);
+    arb.start();
     InterposerBackend tenant0("ipc:///tmp/propreact0b.ipc", "ipc:///tmp/propreact0a.ipc", 0, &reqpool, &gwin);
     tenant0.start();
     InterposerBackend tenant1("ipc:///tmp/propreact1b.ipc", "ipc:///tmp/propreact1a.ipc", 1, &reqpool, &gwin);
