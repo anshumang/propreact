@@ -50,7 +50,7 @@ void Predictor::ProcessTrigger()
       //std::cout << "New trigger received" << std::endl;;
       Grid g;
       m_trig->ReadData(&g);
-      std::cerr << "Predictor::ProcessTrigger " << g.x << " " << g.y << " " << g.z << std::endl;
+      //std::cerr << "Predictor::ProcessTrigger " << g.x << " " << g.y << " " << g.z << std::endl;
 /*Notify after response from daemon, may choose to not contact daemon and then, Interposer released quicker*/
       //m_trig->Notify(2);
       if((g.x==0)&&(g.y==0)&&(!m_lib))
@@ -92,7 +92,7 @@ void Predictor::ProcessTrigger()
       unsigned long active = m_win->ReadDataActive(g);
       unsigned long idle = m_win->ReadDataIdle(g);
       RecordVec r = m_gwin->consume();
-      //std::cout << r.size() << std::endl;
+      //std::cerr << "Predictor:RecordVec size " << r.size() << std::endl;
       //std::cout << "From Window --- " << g.x << " " << g.y << " " << g.z << " " << idle << std::endl;
       //std::cout << now_t - m_last << " " << idle << std::endl;
       //m_last = now_t + idle;
@@ -120,12 +120,12 @@ void Predictor::ProcessTrigger()
       }
       //assert((bytes = m_req_comm->send(req.c_str(), req.length()+1))>=0);    
       //std::cout << "--- " << pkt_size/sizeof(unsigned long) << " " << r.size() << " " << (pkt_size/sizeof(unsigned long)-2)/3 << std::endl;
-      std::cout << m_pkt[0]/sizeof(unsigned long) << std::endl;
-      std::cout << m_pkt[1] << std::endl;
+      //std::cout << m_pkt[0]/sizeof(unsigned long) << std::endl;
+      //std::cout << m_pkt[1] << std::endl;
       for(int i=0; i<(pkt_size/sizeof(unsigned long)-2)/3; i++)
       {
           //std::cout << *((unsigned long *)buff+i) << std::endl;
-          std::cout << m_pkt[2+3*i] << " " << m_pkt[3*i+3] << " " << m_pkt[3*i+4] << std::endl;
+          //std::cout << m_pkt[2+3*i] << " " << m_pkt[3*i+3] << " " << m_pkt[3*i+4] << std::endl;
       }
 #if 1
       assert((bytes = m_req_comm->send(buff, pkt_size))>=0);    
@@ -133,7 +133,7 @@ void Predictor::ProcessTrigger()
       {
          void *buf = NULL;
          int bytes = m_resp_comm->receive(&buf);
-         std::cout << "I : aka After receive" << std::endl;
+         //std::cout << "Predictor : After receive" << std::endl;
          assert(bytes >= 0);
          m_req_comm->freemsg(buf);
          m_trig->Notify(2);

@@ -53,7 +53,7 @@ void Arbiter::process()
             }
         }
         if(tenants_with_requests.size()>0){
-          std::cerr << "Arbiter::process found " << tenants_with_requests.size() << " requests" << std::endl;
+          //std::cerr << "Arbiter::process found " << tenants_with_requests.size() << " requests" << std::endl;
         }
         std::set<unsigned int> tenants_to_be_responded;
         /*for now, simply adds the lookup cost*/
@@ -73,7 +73,7 @@ void Arbiter::process()
              }
         }
         if(tenants_to_be_responded.size()>0){
-          std::cerr << "Arbiter::process found " << tenants_to_be_responded.size() << " responses" << std::endl;
+          //std::cerr << "Arbiter::process found " << tenants_to_be_responded.size() << " responses" << std::endl;
         }
         for(auto search=tenants_to_be_responded.begin();
             search!=tenants_to_be_responded.end();

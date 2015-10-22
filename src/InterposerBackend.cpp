@@ -51,14 +51,16 @@ void InterposerBackend::process()
        void *buf = NULL;
        //std::cout << "IB : Before receive" << std::endl;
        int bytes = m_req_comm->receive(&buf);
+       struct timeval now, later;
+       gettimeofday(&now, NULL);
        unsigned long *pkt = (unsigned long*)buf;
-       std::cout << pkt[0]/sizeof(unsigned long) << std::endl;
-       std::cout << pkt[1] << std::endl;
+       //std::cout << pkt[0]/sizeof(unsigned long) << std::endl;
+       //std::cout << pkt[1] << std::endl;
        m_req_pool->update(std::make_pair(m_tenant_id, pkt[1]));
        for(int i=0; i<(pkt[0]/sizeof(unsigned long)-2)/3; i++)
        {
           //std::cout << *((unsigned long *)buff+i) << std::endl;
-          std::cout << pkt[2+3*i] << " " << pkt[3*i+3] << " " << pkt[3*i+4] << std::endl;
+          //std::cout << pkt[2+3*i] << " " << pkt[3*i+3] << " " << pkt[3*i+4] << std::endl;
           if(m_tenant_id == 0)
           {
              m_gwin->update_idle(pkt[2+3*i], pkt[3*i+3], pkt[3*i+4], m_tenant_id);
@@ -68,11 +70,13 @@ void InterposerBackend::process()
              m_gwin->update_active(pkt[2+3*i], pkt[3*i+3], pkt[3*i+4], m_tenant_id);
           }
        }
-       std::cout << "IB : After receive" << std::endl;
+       //std::cout << "IB : After receive" << std::endl;
        m_req_pool->wait(m_tenant_id);
        assert(bytes >= 0);
        m_req_comm->freemsg(buf);
        std::string resp("RESPONSE");
        assert((bytes = m_resp_comm->send(resp.c_str(), resp.length()+1)) >= 0);
+       gettimeofday(&later, NULL);
+       std::cerr << (later.tv_sec - now.tv_sec)*1000000 + (later.tv_usec - now.tv_usec) << std::endl;
    }
 }

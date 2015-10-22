@@ -22,6 +22,7 @@
 
 #include <thread>
 #include <iostream>
+#include <sys/time.h>
 #include "Communicator.h"
 #include "RequestPool.h"
 #include "GlobalWindow.h"

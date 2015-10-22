@@ -97,7 +97,7 @@ void CuptiProfiler::read()
 
 void CuptiProfiler::insert(CUpti_Activity *record)
 {
-  //std::cout << "CuptiProfiler::process" << std::endl;
+  //std::cout << "CuptiProfiler::insert" << std::endl;
   m_curr_records++;
   if((record->kind == CUPTI_ACTIVITY_KIND_CONCURRENT_KERNEL)||(record->kind == CUPTI_ACTIVITY_KIND_KERNEL))
   {

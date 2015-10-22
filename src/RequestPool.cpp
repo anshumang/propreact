@@ -41,7 +41,7 @@ void RequestPool::update(TenantIdExperimentalKeyPair p)
     m_tenant_requests.insert(std::make_pair(p.first, p.second));
     if (m_tenant_requests.find(p.first) != m_tenant_requests.end())
     {
-      std::cerr << "RequestPool::update OK" << std::endl;
+      //std::cerr << "RequestPool::update OK" << std::endl;
     }
     m_mutex.unlock();
 }
@@ -54,7 +54,7 @@ ExperimentalKey RequestPool::retrieve(unsigned int t)
     if (m_tenant_requests.find(t) != m_tenant_requests.end())
     {
        k = m_tenant_requests[t];
-       std::cerr << "RequestPool::retrieve OK" << std::endl;
+       //std::cerr << "RequestPool::retrieve OK" << std::endl;
     }
     m_tenant_requests.erase(t);
     m_mutex.unlock();
@@ -64,12 +64,12 @@ ExperimentalKey RequestPool::retrieve(unsigned int t)
 
 void RequestPool::wait(int t)
 {
-    std::cerr << "RequestPool::wait entering" << std::endl;
+    //std::cerr << "RequestPool::wait entering" << std::endl;
     std::unique_lock<std::mutex> lk(m_tenant_mutex[t]);
     m_tenant_notify[t].wait(lk, [this, t]{return m_tenant_ready[t];});
     m_tenant_ready[t] = false;
     lk.unlock();
-    std::cerr << "RequestPool::wait exiting" << std::endl;
+    //std::cerr << "RequestPool::wait exiting" << std::endl;
 }
 
 void RequestPool::release(int t)
